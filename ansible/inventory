@@ -1,0 +1,13 @@
+[sou_1]
+soufe1 ansible_host=192.168.0.10 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/soufe1/virtualbox/private_key
+
+[sou_2]
+soufe2 ansible_host=192.168.0.20 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/soufe2/virtualbox/private_key
+
+[all_nodes:children]
+sou_1
+sou_2
+
+[all:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+

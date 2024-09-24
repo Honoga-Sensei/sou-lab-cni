@@ -1,0 +1,33 @@
+[server]
+protocol = http
+http_port = 3000
+root_url = http://192.168.0.10:3000  
+
+
+[auth]
+# Enable anonymous access
+disable_login_form = false
+enable = true
+
+[users]
+# Allow sign up
+allow_sign_up = true
+
+[database]
+# Database type
+type = sqlite3
+# Path to SQLite database
+path = grafana.db
+
+[log]
+# Log level
+level = info
+
+[auth.basic]
+enabled = true
+
+[auth.anonymous]
+enabled = true
+org_name = Main Org.
+org_role = Viewer
+

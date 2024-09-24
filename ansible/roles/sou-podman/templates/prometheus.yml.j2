@@ -1,0 +1,9 @@
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['192.168.0.20:9090']  # Correct Prometheus IP and port
+
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['192.168.0.20:3000']  # Correct Grafana IP and port
+

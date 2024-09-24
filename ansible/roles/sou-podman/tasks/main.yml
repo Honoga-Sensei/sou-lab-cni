@@ -1,0 +1,81 @@
+---
+- name: Install Podman and Podman-Docker
+  package:
+    name:
+      - podman
+      - podman-docker
+    state: present
+
+- name: Install HAProxy with Podman on soufe1
+  when: inventory_hostname == 'soufe1'
+  block:
+    - name: Ensure /etc/haproxy directory exists
+      file:
+        path: /etc/haproxy
+        state: directory
+        mode: '0755'  # Set permissions as needed
+
+    - name: Copy HAProxy configuration file
+      template:
+        src: haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+
+    - name: Run HAProxy container
+      containers.podman.podman_container:
+        name: haproxy
+        image: docker.io/haproxy:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "8080:8080"
+          - "8081:8081"
+        volumes:
+          - /etc/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+
+- name: Install Prometheus and Grafana on soufe2
+  when: inventory_hostname == 'soufe2'
+  block:
+    - name: Ensure /etc/prometheus directory exists
+      file:
+        path: /etc/prometheus
+        state: directory
+        mode: '0755'  # Set permissions as needed
+
+    - name: Ensure /etc/grafana directory exists
+      file:
+        path: /etc/grafana
+        state: directory
+        mode: '0755'  # Set permissions as needed
+
+    - name: Copy Prometheus configuration file
+      template:
+        src: prometheus.yml.j2
+        dest: /etc/prometheus/prometheus.yml
+
+    - name: Copy Grafana configuration file
+      template:
+        src: grafana.ini.j2
+        dest: /etc/grafana/grafana.ini
+
+    - name: Run Prometheus container
+      containers.podman.podman_container:
+        name: prometheus
+        image: docker.io/prom/prometheus:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "9090:9090"
+        volumes:
+          - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+    - name: Run Grafana container
+      containers.podman.podman_container:
+        name: grafana
+        image: docker.io/grafana/grafana:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "3000:3000"
+        volumes:
+          - /etc/grafana/grafana.ini:/etc/grafana/grafana.ini:ro
+
